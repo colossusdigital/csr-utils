@@ -1,0 +1,2 @@
+git+https://github.com/blockstack/secret-sharing
+cryptography==37.0.4
