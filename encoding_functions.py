@@ -45,6 +45,32 @@ def split_and_encode_string(secret_string, k=2, n=4, chunk_size=1024):
     return share_chunks
 
 
+def combine_secret_shares(share_chunks):
+    if len(share_chunks) > 1:
+        if share_chunks[0][0][0] != share_chunks[1][0][0]:
+            share_chunks = prepare_shares_for_combine(share_chunks)
+
+    # Recover each chunk using a subset of the shares
+    recovered_secret_chunks = []
+    for shares in share_chunks:
+        recovered_hex_chunk = PlaintextToHexSecretSharer.recover_secret(shares)
+        recovered_chunk = hex_to_string(recovered_hex_chunk)
+        recovered_secret_chunks.append(recovered_chunk)
+    # Combine the recovered chunks to form the recovered secret string
+    recovered_secret_string = "".join(recovered_secret_chunks)
+    return recovered_secret_string
+
+
+def prepare_shares_for_combine(shares):
+    share_chunks = []
+    for i in range(len(shares[0])):
+        temp = []
+        for j in shares:
+            temp.append(j[i])
+        share_chunks.append(temp)
+    return share_chunks
+
+
 def _split_large_string(secret_string, chunk_size):
     return [secret_string[i:i + chunk_size] for i in range(0, len(secret_string), chunk_size)]
 
