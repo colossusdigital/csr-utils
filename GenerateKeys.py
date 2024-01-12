@@ -1,6 +1,5 @@
 import argparse
-from encoding_functions import generate_rsa_key_and_public_key, split_and_encode_string
-import json
+from encoding_functions import generate_rsa_key_and_public_key
 import os
 import sys
 
@@ -13,7 +12,7 @@ parser.add_argument("--folder_path", type=str,
 args = parser.parse_args()
 
 if not args.file_name:
-    args.file_name = input('Insert key file name:')
+    args.file_name = input('Insert name for files:')
     if len(args.file_name) == 0:
         print('Invalid key file name. Length must be >1.')
         sys.exit(1)
@@ -33,15 +32,7 @@ try:
         f.write(public_key)
     with open(args.folder_path + args.file_name + '_private.key', 'w') as f:
         f.write(private_key)
-
-
-
-    ss = split_and_encode_string(private_key, k=2, n=4, chunk_size=1024)
-
-
-    res = {'status': 'True',
-           'result': 'Files saved.'}
-    print(ss)
+    res = 'Files saved.'
 except Exception as e:
-    res = {'status': 'False', 'message': str(e)}
-print(json.dumps(res))
+    res = 'Error!!' + str(e)
+print(res)

@@ -1,8 +1,5 @@
 import argparse
 from encoding_functions import split_and_encode_string
-import json
-import os
-import sys
 
 parser = argparse.ArgumentParser(description="splits a string in different shares using shamir\
                                              secret sharing algorithm")
@@ -16,13 +13,17 @@ parser.add_argument("--folder_path", type=str,
                     help="path to folder in which files will be saved", required=False, default='')
 args = parser.parse_args()
 
-secret_string = open(args.path_to_key, "r").read()
-
-share_chunks = split_and_encode_string(secret_string, k=args.num_shares_for_rebuild, n=args.num_shares, chunk_size=1024)
-
-for client_n in range(args.num_shares):
-    client_chunks = [j[client_n] for j in share_chunks]
-    with open(args.folder_path + 'secret_share_'+str(client_n+1)+'.key', 'w') as key_share_file:
-        key_share_file.write(str(client_chunks))
+try:
+    secret_string = open(args.path_to_key, "r").read()
+    share_chunks = split_and_encode_string(secret_string, k=args.num_shares_for_rebuild,
+                                           n=args.num_shares, chunk_size=1024)
+    for client_n in range(args.num_shares):
+        client_chunks = [j[client_n] for j in share_chunks]
+        with open(args.folder_path + 'secret_share_'+str(client_n+1)+'.key', 'w') as key_share_file:
+            key_share_file.write(str(client_chunks))
+    res = 'Files saved.'
+except Exception as e:
+    res = 'Error!!' + str(e)
+print(res)
 
 
