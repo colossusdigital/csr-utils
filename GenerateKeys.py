@@ -1,5 +1,5 @@
 import argparse
-from encoding_functions import generate_rsa_key_and_public_key
+from encoding_functions import generate_rsa_key_and_public_key, split_and_encode_string
 import json
 import os
 import sys
@@ -29,12 +29,19 @@ if not args.folder_path:
 
 try:
     private_key, public_key = generate_rsa_key_and_public_key()
-    res = {'status': 'True',
-           'result': 'Files saved.'}
     with open(args.folder_path + args.file_name + '_public.csr', 'w') as f:
         f.write(public_key)
     with open(args.folder_path + args.file_name + '_private.key', 'w') as f:
-        f.write(public_key)
+        f.write(private_key)
+
+
+
+    ss = split_and_encode_string(private_key, k=2, n=4, chunk_size=1024)
+
+
+    res = {'status': 'True',
+           'result': 'Files saved.'}
+    print(ss)
 except Exception as e:
     res = {'status': 'False', 'message': str(e)}
 print(json.dumps(res))
