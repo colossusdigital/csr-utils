@@ -41,7 +41,6 @@ try:
 
     share_chunks = split_and_encode_string(private_key, k=args.num_shares_for_rebuild, n=args.num_shares,
                                            chunk_size=1024)
-
     for client_n in range(args.num_shares):
         client_chunks = [j[client_n] for j in share_chunks]
         file_path = args.folder_path + args.file_name + '_private_share_' + str(client_n + 1) + '.key'

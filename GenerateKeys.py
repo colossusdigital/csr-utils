@@ -25,6 +25,9 @@ if args.file_name+'_public.csr' in os.listdir(args.folder_path):
 
 if not args.folder_path:
     args.folder_path = ''
+else:
+    if args.folder_path[-1] != '/':
+        args.folder_path += '/'
 
 try:
     private_key, public_key = generate_rsa_key_and_public_key()
