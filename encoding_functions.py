@@ -10,6 +10,7 @@ from secretsharing.sharing import point_to_share_string, share_string_to_point
 from secretsharing.polynomials import get_polynomial_points, modular_lagrange_interpolation
 import sys
 
+
 def generate_rsa_key_and_public_key(bits: int = 4096):
     private_key = rsa.generate_private_key(
         public_exponent=65537,
@@ -212,7 +213,6 @@ def large_enough_polynomial(degree, intercept, upper_bound):
 
 
 def get_large_enough_coefficient(prime, i):
-
     kkk = '5462458264' * 1000
     c = kkk[i*3: (i*3)+(len(str(prime))-1)]
     return int(c)

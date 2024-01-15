@@ -30,20 +30,3 @@ try:
 except Exception as e:
     res = 'Error!!' + str(e)
 print(res)
-
-
-
-
-'''
-if len(shares) < 2:
-    res = {"status": "False",
-           "message": "Not enough shares."}
-else:
-    try:
-        original_string = combine_secret_shares(shares)
-        res = {"status": "True", "result": original_string}
-    except Exception as e:
-        res = {"status": "False",
-               "message": str(e)}
-print(json.dumps(res))
-'''
