@@ -3,7 +3,7 @@ import os
 import sys
 from encoding_functions import split_and_encode_string
 
-parser = argparse.ArgumentParser(description="splits a string in different shares using shamir\
+parser = argparse.ArgumentParser(description="Splits a string in different shares using shamir\
                                              secret sharing algorithm")
 parser.add_argument("--path_to_key", type=str,  help="path to folder with key file. Leave empty \
                                             if file is in current directory", required=False)
@@ -13,7 +13,6 @@ parser.add_argument("--num_shares_for_rebuild", type=int,
                     help="number of shares needed to rebuild the original \
                     string. must be <= num_shares.", required=False, default=2)
 args = parser.parse_args()
-
 names = []
 for i in os.listdir(args.path_to_key):
    if '.key' in i:
