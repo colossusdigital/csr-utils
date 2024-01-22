@@ -21,8 +21,9 @@ To install the required libraries, run the following command:
 ### GenerateKeys.py
 
 This script generates a private and a public key. The keys are stored in 2 separate files:  
-- file_name_private.key  
-- file_name_public.csr  
+1. file_name_private.key  
+2. file_name_public.csr  
+
 Inputs:  
 - file_name: name of the files where the keys will be stored  
 - folder_path: path to folder in which files will be saved. Leave empty to use current directory
