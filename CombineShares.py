@@ -5,9 +5,9 @@ import ast
 
 parser = argparse.ArgumentParser(description="Recombines Shamir's shares and generates the private key. The \
                                     share files must have name in format: file_name_private_share_1.key")
-parser.add_argument("--file_name", type=str, help=" name of key files.", required=True)
-parser.add_argument("--folder_path", type=str,
-                    help="path to folder with shares files", required=False)
+parser.add_argument("--file_name", type=str, help="name of key files.", required=True)
+parser.add_argument("--folder_path", type=str, help="path to folder with shares files. Leave empty \
+                                            if files are in current directory", required=False)
 args = parser.parse_args()
 
 try:

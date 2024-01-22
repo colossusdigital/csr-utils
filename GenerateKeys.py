@@ -8,7 +8,8 @@ parser = argparse.ArgumentParser(description="Generates 2 files containing publi
 parser.add_argument("--file_name", type=str,  help="name of key files.",
                     required=False)
 parser.add_argument("--folder_path", type=str,
-                    help="path to folder in which files will be saved", required=False)
+                    help="path to folder in which files will be saved. Leave empty \
+                                            to use current directory", required=False)
 args = parser.parse_args()
 
 if not args.file_name:

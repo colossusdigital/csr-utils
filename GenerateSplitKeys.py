@@ -8,7 +8,8 @@ parser = argparse.ArgumentParser(description="Generates a public key (file_name_
 parser.add_argument("--file_name", type=str,  help="name of key files.",
                     required=False)
 parser.add_argument("--folder_path", type=str,
-                    help="path to folder in which files will be saved", required=False)
+                    help="path to folder in which files will be saved. Leave empty \
+                                            to use current directory", required=False)
 parser.add_argument("--num_shares", type=int,
                     help="number of shares to be created", required=False, default=4)
 parser.add_argument("--num_shares_for_rebuild", type=int,
