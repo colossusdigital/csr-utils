@@ -15,9 +15,9 @@ parser.add_argument("--num_shares_for_rebuild", type=int,
 args = parser.parse_args()
 names = []
 for i in os.listdir(args.path_to_key):
-   if '.key' in i:
-       if 'share_' not in i:
-           names.append(i)
+    if '.key' in i:
+        if 'share_' not in i:
+            names.append(i)
 if len(names) == 0:
     print('File ".key" not found.\n', os.listdir(args.path_to_key))
     file_name = input('Insert file name:')
