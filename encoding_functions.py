@@ -12,6 +12,9 @@ import sys
 
 
 def generate_rsa_key_and_public_key(bits: int = 4096):
+    """
+    Generates a public and private key.
+    """
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=bits,
@@ -35,6 +38,10 @@ def generate_rsa_key_and_public_key(bits: int = 4096):
 
 
 def split_and_encode_string(secret_string, k=2, n=4, chunk_size=1024):
+    """
+    Splits a string into n shares using Shamir's secret sharing algorithm. To rebuild
+    the original string, at least k shares are needed.
+    """
     # Split the large string into smaller chunks
     secret_chunks = _split_large_string(secret_string, chunk_size)
     # Split each chunk into shares
@@ -47,9 +54,11 @@ def split_and_encode_string(secret_string, k=2, n=4, chunk_size=1024):
 
 
 def combine_secret_shares(share_chunks):
-    if len(share_chunks) > 1:
-        if share_chunks[0][0][0] != share_chunks[1][0][0]:
-            share_chunks = prepare_shares_for_combine(share_chunks)
+    """
+    Combines shares to recover the original secret string.
+    """
+    if (len(share_chunks) > 1) and (share_chunks[0][0][0] != share_chunks[1][0][0]):
+        share_chunks = prepare_shares_for_combine(share_chunks)
 
     # Recover each chunk using a subset of the shares
     recovered_secret_chunks = []
@@ -86,6 +95,9 @@ class SecretSharer:
     share_charset = string.hexdigits[0:16]
 
     def __init__(self):
+        """
+        empty constructor
+        """
         pass
 
     @classmethod
@@ -108,7 +120,8 @@ class SecretSharer:
 
 
 class PlaintextToHexSecretSharer(SecretSharer):
-    """ Good for converting secret messages into standard hex shares.
+    """
+    Good for converting secret messages into standard hex shares.
     """
     secret_charset = string.printable
     share_charset = string.hexdigits[0:16]
@@ -135,7 +148,6 @@ def secret_int_to_points(secret_int, point_threshold, num_points, prime=None):
 
 def points_to_secret_int(points, prime=None):
     """ Join int points into a secret int.
-
         Get the intercept of a random polynomial defined by the given points.
     """
     if not isinstance(points, list):
@@ -205,7 +217,7 @@ def large_enough_polynomial(degree, intercept, upper_bound):
     if degree < 0:
         raise ValueError('Degree must be a non-negative number.')
     coefficients = [intercept]
-    #sys.set_int_max_str_digits(6500)
+    sys.set_int_max_str_digits(6500)
     for i in range(degree):
         coefficient = get_large_enough_coefficient(upper_bound, i)
         coefficients.append(coefficient)
