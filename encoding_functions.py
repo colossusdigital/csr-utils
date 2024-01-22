@@ -205,7 +205,7 @@ def large_enough_polynomial(degree, intercept, upper_bound):
     if degree < 0:
         raise ValueError('Degree must be a non-negative number.')
     coefficients = [intercept]
-    sys.set_int_max_str_digits(6500)
+    #sys.set_int_max_str_digits(6500)
     for i in range(degree):
         coefficient = get_large_enough_coefficient(upper_bound, i)
         coefficients.append(coefficient)

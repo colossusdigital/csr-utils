@@ -16,7 +16,8 @@ args = parser.parse_args()
 names = []
 for i in os.listdir(args.path_to_key):
    if '.key' in i:
-       names.append(i)
+       if 'share_' not in i:
+           names.append(i)
 if len(names) == 0:
     print('File ".key" not found.\n', os.listdir(args.path_to_key))
     file_name = input('Insert file name:')
@@ -40,7 +41,7 @@ try:
                                            n=args.num_shares, chunk_size=1024)
     for client_n in range(args.num_shares):
         client_chunks = [j[client_n] for j in share_chunks]
-        file_path = args.path_to_key + file_name + '_share_' + str(client_n + 1) + '.key'
+        file_path = args.path_to_key + file_name.replace('.key', '') + '_share_' + str(client_n + 1) + '.key'
         with open(file_path, 'w') as key_share_file:
             key_share_file.write(str(client_chunks))
     res = 'Files saved.'
