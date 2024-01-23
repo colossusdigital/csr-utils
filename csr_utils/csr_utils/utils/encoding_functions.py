@@ -7,7 +7,10 @@ from cryptography import x509
 import string
 from utilitybelt import int_to_charset, charset_to_int
 from secretsharing.sharing import point_to_share_string, share_string_to_point
-from secretsharing.polynomials import get_polynomial_points, modular_lagrange_interpolation
+from secretsharing.polynomials import (
+    get_polynomial_points,
+    modular_lagrange_interpolation,
+)
 import sys
 
 
@@ -16,25 +19,32 @@ def generate_rsa_key_and_public_key(bits: int = 4096):
     Generates a public and private key.
     """
     private_key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=bits,
-        backend=default_backend())
+        public_exponent=65537, key_size=bits, backend=default_backend()
+    )
 
-    csr = CertificateSigningRequestBuilder().subject_name(
-        x509.Name([
-            x509.NameAttribute(NameOID.COUNTRY_NAME, 'IT'),
-            x509.NameAttribute(NameOID.LOCALITY_NAME, 'Rome'),
-            x509.NameAttribute(NameOID.ORGANIZATION_NAME, 'Colossus'),
-            x509.NameAttribute(NameOID.COMMON_NAME, 'colossus.digital'),
-            x509.NameAttribute(NameOID.EMAIL_ADDRESS, '')])
-    ).sign(private_key, hashes.SHA256(), default_backend())
+    csr = (
+        CertificateSigningRequestBuilder()
+        .subject_name(
+            x509.Name(
+                [
+                    x509.NameAttribute(NameOID.COUNTRY_NAME, "IT"),
+                    x509.NameAttribute(NameOID.LOCALITY_NAME, "Rome"),
+                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Colossus"),
+                    x509.NameAttribute(NameOID.COMMON_NAME, "colossus.digital"),
+                    x509.NameAttribute(NameOID.EMAIL_ADDRESS, ""),
+                ]
+            )
+        )
+        .sign(private_key, hashes.SHA256(), default_backend())
+    )
 
     public = csr.public_bytes(serialization.Encoding.PEM)
     private = private_key.private_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption())
-    return public.decode('utf-8'), private.decode('utf-8')
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+    return public.decode("utf-8"), private.decode("utf-8")
 
 
 def split_and_encode_string(secret_string, k=2, n=4, chunk_size=1024):
@@ -57,7 +67,9 @@ def combine_secret_shares(share_chunks):
     """
     Combines shares to recover the original secret string.
     """
-    if (len(share_chunks) > 1) and (share_chunks[0][0][0] != share_chunks[1][0][0]):
+    if (len(share_chunks) > 1) and (
+        share_chunks[0][0][0] != share_chunks[1][0][0]
+    ):
         share_chunks = prepare_shares_for_combine(share_chunks)
 
     # Recover each chunk using a subset of the shares
@@ -82,15 +94,19 @@ def prepare_shares_for_combine(shares):
 
 
 def _split_large_string(secret_string, chunk_size):
-    return [secret_string[i:i + chunk_size] for i in range(0, len(secret_string), chunk_size)]
+    return [
+        secret_string[i : i + chunk_size]
+        for i in range(0, len(secret_string), chunk_size)
+    ]
 
 
 class SecretSharer:
-    """ Creates a secret sharer, which can convert from a secret string to a
-        list of shares and vice versa. The splitter is initialized with the
-        character set of the secrets and the character set of the shares that
-        it expects to be dealing with.
+    """Creates a secret sharer, which can convert from a secret string to a
+    list of shares and vice versa. The splitter is initialized with the
+    character set of the secrets and the character set of the shares that
+    it expects to be dealing with.
     """
+
     secret_charset = string.hexdigits[0:16]
     share_charset = string.hexdigits[0:16]
 
@@ -123,15 +139,16 @@ class PlaintextToHexSecretSharer(SecretSharer):
     """
     Good for converting secret messages into standard hex shares.
     """
+
     secret_charset = string.printable
     share_charset = string.hexdigits[0:16]
 
 
 def secret_int_to_points(secret_int, point_threshold, num_points, prime=None):
-    """ Split a secret (integer) into shares (pair of integers / x,y coordinates).
+    """Split a secret (integer) into shares (pair of integers / x,y coordinates).
 
-        Sample the points of a random polynomial with the y intercept equal to
-        the secret int.
+    Sample the points of a random polynomial with the y intercept equal to
+    the secret int.
     """
     if point_threshold < 2:
         raise ValueError("Threshold must be >= 2.")
@@ -141,22 +158,23 @@ def secret_int_to_points(secret_int, point_threshold, num_points, prime=None):
         prime = get_large_enough_prime([secret_int, num_points])
     if not prime:
         raise ValueError("Error! Secret is too long for share calculation!")
-    coefficients = large_enough_polynomial(point_threshold - 1, secret_int, prime)
+    coefficients = large_enough_polynomial(
+        point_threshold - 1, secret_int, prime
+    )
     points = get_polynomial_points(coefficients, num_points, prime)
     return points
 
 
 def points_to_secret_int(points, prime=None):
-    """ Join int points into a secret int.
-        Get the intercept of a random polynomial defined by the given points.
+    """Join int points into a secret int.
+    Get the intercept of a random polynomial defined by the given points.
     """
     if not isinstance(points, list):
         raise ValueError("Points must be in list form.")
     for point in points:
         if not isinstance(point, tuple) and len(point) == 2:
             raise ValueError("Each point must be a tuple of two values.")
-        if not (isinstance(point[0], int) and
-                isinstance(point[1], int)):
+        if not (isinstance(point[0], int) and isinstance(point[1], int)):
             raise ValueError("Each value in the point must be an int.")
     x_values, y_values = zip(*points)
     if not prime:
@@ -167,19 +185,42 @@ def points_to_secret_int(points, prime=None):
 
 
 def calculate_mersenne_primes():
-    """ Returns all the mersenne primes with less than 500 digits.
-        All primes:
-        3, 7, 31, 127, 8191, 131071, 524287, 2147483647L, 2305843009213693951L,
-        618970019642690137449562111L, 162259276829213363391578010288127L,
-        170141183460469231731687303715884105727L,
-        68647976601306097149...12574028291115057151L, (157 digits)
-        53113799281676709868...70835393219031728127L, (183 digits)
-        10407932194664399081...20710555703168729087L, (386 digits)
+    """Returns all the mersenne primes with less than 500 digits.
+    All primes:
+    3, 7, 31, 127, 8191, 131071, 524287, 2147483647L, 2305843009213693951L,
+    618970019642690137449562111L, 162259276829213363391578010288127L,
+    170141183460469231731687303715884105727L,
+    68647976601306097149...12574028291115057151L, (157 digits)
+    53113799281676709868...70835393219031728127L, (183 digits)
+    10407932194664399081...20710555703168729087L, (386 digits)
     """
     mersenne_prime_exponents = [
-        2, 3, 5, 7, 13, 17, 19, 31, 61, 89,
-        107, 127, 521, 607, 1279, 2203, 2281, 3217, 4253, 4423,
-        9689, 9941, 11213, 19937, 21701]
+        2,
+        3,
+        5,
+        7,
+        13,
+        17,
+        19,
+        31,
+        61,
+        89,
+        107,
+        127,
+        521,
+        607,
+        1279,
+        2203,
+        2281,
+        3217,
+        4253,
+        4423,
+        9689,
+        9941,
+        11213,
+        19937,
+        21701,
+    ]
     primes = []
     for exp in mersenne_prime_exponents:
         prime = 1
@@ -190,17 +231,19 @@ def calculate_mersenne_primes():
     return primes
 
 
-SMALLEST_257BIT_PRIME = (2**256 + 297)
-SMALLEST_321BIT_PRIME = (2**320 + 27)
-SMALLEST_385BIT_PRIME = (2**384 + 231)
+SMALLEST_257BIT_PRIME = 2**256 + 297
+SMALLEST_321BIT_PRIME = 2**320 + 27
+SMALLEST_385BIT_PRIME = 2**384 + 231
 STANDARD_PRIMES = calculate_mersenne_primes() + [
-    SMALLEST_257BIT_PRIME, SMALLEST_321BIT_PRIME, SMALLEST_385BIT_PRIME]
+    SMALLEST_257BIT_PRIME,
+    SMALLEST_321BIT_PRIME,
+    SMALLEST_385BIT_PRIME,
+]
 STANDARD_PRIMES.sort()
 
 
 def get_large_enough_prime(batch):
-    """ Returns a prime number that is greater all the numbers in the batch.
-    """
+    """Returns a prime number that is greater all the numbers in the batch."""
     # build a list of primes
     primes = STANDARD_PRIMES
     # find a prime that is greater than all the numbers in the batch
@@ -212,12 +255,14 @@ def get_large_enough_prime(batch):
 
 
 def large_enough_polynomial(degree, intercept, upper_bound):
-    """ Generates a random polynomial with positive coefficients.
-    """
+    """Generates a random polynomial with positive coefficients."""
     if degree < 0:
-        raise ValueError('Degree must be a non-negative number.')
+        raise ValueError("Degree must be a non-negative number.")
     coefficients = [intercept]
-    sys.set_int_max_str_digits(6500)
+    try:
+        sys.set_int_max_str_digits(6500)
+    except AttributeError:
+        pass
     for i in range(degree):
         coefficient = get_large_enough_coefficient(upper_bound, i)
         coefficients.append(coefficient)
@@ -225,8 +270,8 @@ def large_enough_polynomial(degree, intercept, upper_bound):
 
 
 def get_large_enough_coefficient(prime, i):
-    kkk = '5462458264' * 1000
-    c = kkk[i*3: (i*3)+(len(str(prime))-1)]
+    kkk = "5462458264" * 1000
+    c = kkk[i * 3 : (i * 3) + (len(str(prime)) - 1)]
     return int(c)
 
 
