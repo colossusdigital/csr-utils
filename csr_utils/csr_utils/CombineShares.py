@@ -36,7 +36,7 @@ def combine_shares(file_name: str, folder_path: Optional[str] = None) -> None:
 
     combined_key = combine_secret_shares(shares)
 
-    with open(os.path.join(path, "combined_private.key"), "w") as file:
+    with open(os.path.join(path, file_name+ "_combined_private.key"), "w") as file:
         file.write(combined_key)
 
     logging.info("File saved.")
