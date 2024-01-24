@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "colossus-csr-utils"
+version = "0.1.0"
+description = "This repository contains a set of scripts to create and manage key pairs (public and private key)."
+authors = ["Colossus"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

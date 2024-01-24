@@ -61,10 +61,11 @@ def main() -> None:
     Main function to parse arguments and call the key generation and splitting function.
     """
     parser = argparse.ArgumentParser(
-        description="Generates a public key (file_name_public.csr) and a split private key applying Shamir's sharing algorithm (file_name_private_share_n.key)."
+        description="Generates a public key (file_name_public.csr) and a split private key applying Shamir's \
+        sharing algorithm (file_name_private_share_n.key)."
     )
     parser.add_argument(
-        "--file_name", type=str, help="name of key files.", required=False
+        "--file_name", type=str, help="name of key files.", required=False, default="my_key"
     )
     parser.add_argument(
         "--folder_path",
@@ -88,8 +89,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    file_name = args.file_name or input("Insert name for files:").strip()
-    if not file_name:
+    if not args.file_name:
         logging.error("Invalid file name. Length must be > 0.")
         sys.exit(1)
 
@@ -97,7 +97,7 @@ def main() -> None:
     if folder_path and not folder_path.endswith("/"):
         folder_path += "/"
 
-    if os.path.exists(os.path.join(folder_path, file_name + "_public.csr")):
+    if os.path.exists(os.path.join(folder_path, args.file_name + "_public.csr")):
         resp = input("file_name already exists. Overwrite file? [y/n]")
         if resp.lower() != "y":
             logging.info("Aborted process.")
@@ -105,7 +105,7 @@ def main() -> None:
 
     try:
         share_files = generate_and_split_keys(
-            file_name, folder_path, args.num_shares, args.num_shares_for_rebuild
+            args.file_name, folder_path, args.num_shares, args.num_shares_for_rebuild
         )
         logging.info(f'Files saved: {", ".join(share_files)}')
     except Exception as e:

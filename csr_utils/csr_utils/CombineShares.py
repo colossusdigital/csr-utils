@@ -36,10 +36,10 @@ def combine_shares(file_name: str, folder_path: Optional[str] = None) -> None:
 
     combined_key = combine_secret_shares(shares)
 
-    with open(os.path.join(path, file_name+ "_combined_private.key"), "w") as file:
+    with open(os.path.join(path, file_name + "_combined_private.key"), "w") as file:
         file.write(combined_key)
 
-    logging.info("File saved.")
+    logging.info(f"Files saved: {file_name}_combined_private.key")
 
 
 def main() -> None:
@@ -48,7 +48,7 @@ def main() -> None:
     """
     parser = argparse.ArgumentParser(
         description="Recombines Shamir's shares and generates the private key. The"
-        " share files must have name in format: file_name_private_share_1.key"
+        " share files must have name in format: file_name_private_share_n.key"
     )
 
     parser.add_argument(
