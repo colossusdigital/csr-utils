@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "colossus-csr-utils"
+name = "csr_utils"
 version = "0.1.0"
 description = "This repository contains a set of scripts to create and manage key pairs (public and private key)."
 authors = ["Colossus"]
