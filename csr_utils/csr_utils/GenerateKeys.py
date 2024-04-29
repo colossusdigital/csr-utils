@@ -25,7 +25,7 @@ def generate_keys(file_name: str, folder_path: str) -> Tuple[str, str]:
     Raises:
     Exception: If any error occurs during key generation.
     """
-    private_key, public_key = generate_rsa_key_and_public_key()
+    public_key, private_key = generate_rsa_key_and_public_key()
     public_key_path = os.path.join(folder_path, f"{file_name}_public.csr")
     private_key_path = os.path.join(folder_path, f"{file_name}_private.key")
 
