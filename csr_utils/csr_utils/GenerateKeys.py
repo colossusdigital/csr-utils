@@ -62,8 +62,8 @@ def main() -> None:
         sys.exit(1)
 
     folder_path = args.folder_path or ""
-    if folder_path and not folder_path.endswith("/"):
-        folder_path += "/"
+    if folder_path and not folder_path.endswith(os.sep):
+        folder_path += os.sep
 
     if os.path.exists(os.path.join(folder_path, args.file_name + "_public.csr")):
         resp = input("file_name already exists. Overwrite file? [y/n]")

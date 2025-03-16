@@ -24,8 +24,8 @@ def combine_shares(file_name: str, folder_path: Optional[str] = None) -> None:
     Exception: If any error occurs during file reading or writing.
     """
     path = folder_path if folder_path else ""
-    if folder_path and not folder_path.endswith("/"):
-        path += "/"
+    if folder_path and not folder_path.endswith(os.sep):
+        path += os.sep
 
     shares = []
     for name in os.listdir(path):

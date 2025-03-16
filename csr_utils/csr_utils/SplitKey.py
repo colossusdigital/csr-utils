@@ -82,8 +82,8 @@ def main() -> None:
     args = parser.parse_args()
 
     path_to_key = args.path_to_key or ""
-    if path_to_key and not path_to_key.endswith("/"):
-        path_to_key += "/"
+    if path_to_key and not path_to_key.endswith(os.sep):
+        path_to_key += os.sep
 
     key_files = [
         f
