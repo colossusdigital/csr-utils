@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import logging
+import json
 from typing import List
 from utils.encoding_functions import split_and_encode_string
 
@@ -46,7 +47,7 @@ def split_string_into_shares(
             file_name.replace(".key", "") + f"_share_{client_n + 1}.key",
         )
         with open(share_file_path, "w") as key_share_file:
-            key_share_file.write(str(client_chunks))
+            key_share_file.write(json.dumps(client_chunks))
         share_files.append(share_file_path)
 
     return share_files
