@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import logging
+import json
 from typing import List
 from utils.encoding_functions import (
     generate_rsa_key_and_public_key,
@@ -50,7 +51,7 @@ def generate_and_split_keys(
             folder_path, f"{file_name}_private_share_{client_n + 1}.key"
         )
         with open(share_file_path, "w") as key_share_file:
-            key_share_file.write(str(client_chunks))
+            key_share_file.write(json.dumps(client_chunks))
         share_files.append(share_file_path)
 
     return share_files
